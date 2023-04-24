@@ -40,7 +40,7 @@ foreach ($serialNumber in $excelData.SerialNumber) {
     if ($device) {
         try {
             Write-Host "Deleting device with serial number $serialNumber from Autopilot..."
-            Remove-AutopilotDevice -Id $device.id -Force
+            Remove-AutopilotDevice -Id $device.id
         } catch {
             Write-Host "Error deleting device with serial number $serialNumber from Autopilot: $_"
         }
