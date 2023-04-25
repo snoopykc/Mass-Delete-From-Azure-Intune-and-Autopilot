@@ -1,7 +1,8 @@
-﻿Import-Module AzureAD
+Import-Module AzureAD
 Import-Module ImportExcel
 Import-Module Microsoft.Graph.Intune
 import-module WindowsAutopilotIntune
+
 
 # Load the Excel file containing the list of serial numbers to delete
 $excelFilePath = "C:\Test\test.xlsx"
@@ -22,17 +23,6 @@ foreach ($serialNumber in $excelData.SerialNumber) {
     }
 }
 
-# Delete devices from Azure AD
-foreach ($serialNumber in $excelData.SerialNumber) {
-    $deviceId = (Get-AzureADDevice | Where-Object { $_.DevicePhysicalIds -contains $serialNumber }).ObjectId
-    if ($deviceId) {
-        Write-Host "Deleting device with serial number $serialNumber from Azure AD..."
-        Remove-AzureADDevice -ObjectId $deviceId
-    } else {
-        Write-Host "Device with serial number $serialNumber not found in Azure AD."
-    }
-}
-
 # Delete devices from Autopilot
 foreach ($serialNumber in $excelData.SerialNumber) {
     $devices = Get-AutopilotDevice
@@ -46,5 +36,16 @@ foreach ($serialNumber in $excelData.SerialNumber) {
         }
     } else {
         Write-Host "Device with serial number $serialNumber not found in Autopilot."
+    }
+}
+
+# Delete devices from Azure AD
+foreach ($serialNumber in $excelData.SerialNumber) {
+    $deviceId = (Get-AzureADDevice | Where-Object { $_.DevicePhysicalIds -contains $serialNumber }).ObjectId
+    if ($deviceId) {
+        Write-Host "Deleting device with serial number $serialNumber from Azure AD..."
+        Remove-AzureADDevice -ObjectId $deviceId
+    } else {
+        Write-Host "Device with serial number $serialNumber not found in Azure AD."
     }
 }
